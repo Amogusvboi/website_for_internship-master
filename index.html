@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Custom styles for the page */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-image: url('background-tower.png');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      /* color: white; */
+    }
+
+    /* Custom styles for the navigation bar */
+    .navbar {
+      background-color: transparent;
+      color: white;
+      font-family: "Marvel", sans-serif;
+    }
+
+    .navbar-brand img {
+      height: 30px;
+      width: auto;
+      margin-right: 10px;
+      filter: invert(100%);
+    }
+
+    .navbar .btn {
+      color: white;
+      border: none;
+    }
+
+    .navbar .btn-yellow {
+      background-color: rgb(58, 150, 255);
+    }
+
+    /* Custom styles for the Sign Up button */
+    .btn-signup {
+      color: white;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-signup::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+      transform: rotate(-45deg);
+      transition: all 0.4s;
+    }
+
+    .btn-signup:hover {
+      color: black;
+    }
+
+    .btn-signup:hover::before {
+      top: 0;
+      left: 0;
+      opacity: 1;
+    }
+
+    /* Custom styles for the container */
+    .custom-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: calc(100% - 25px); /* Update the height for the first container */
+      padding: 20px;
+    }
+
+    /* Custom styles for the header */
+    .header {
+      text-align: center;
+      margin-top: -50px;
+    }
+
+    .header .internship {
+      color: azure;
+      font-size: 72px;
+      font-family: "Candara", sans-serif;
+      margin-bottom: -13px; /* Adjust the value as needed */
+      font-weight: bold;
+      text-shadow: -2px -2px 0 rgba(128, 128, 128, 0.5), 2px -2px 0 rgba(128, 128, 128, 0.5), -2px 2px 0 rgba(128, 128, 128, 0.5), 2px 2px 0 rgba(128, 128, 128, 0.5);
+    }
+
+    .header .consult {
+      font-size: 30px;
+      color: grey;
+      font-family: "Candara", sans-serif;
+    }
+
+    /* Custom styles for the second container */
+    .second-container {
+      background-color: white;
+      height: calc(100% - 25px); /* Update the height for the second container */
+      border: 2px solid black;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scroll-trigger {
+      position: relative;
+      opacity: 0; /* Set initial opacity to 0 */
+      transform: translateY(200px); /* Move elements 200px up */
+      transition: opacity 0.5s ease, transform 0.5s ease; /* Use easing for smoother transition */
+    }
+
+    .scroll-trigger.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom styles for the popup */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s linear 0.25s, opacity 0.25s;
+    }
+
+    .popup.show {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+    }
+
+    .popup-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .popup-content input {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 5px;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .popup-content button {
+      padding: 10px 20px;
+      border-radius: 3px;
+      border: none;
+      background-color: rgb(58, 150, 255);
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="#">
+      <img src="hamburger.png" alt="Logo">
+    </a>
+    <div class="ml-auto">
+      <button class="btn btn-outline-light mr-2 btn-signup" onclick="showPopup()">Sign Up</button>
+      <button class="btn btn-yellow">Log in</button>
+    </div>
+  </nav>
+
+  <div class="custom-container scroll-trigger">
+    <div class="header">
+      <h1 class="internship">Internship</h1>
+      <p class="consult">at Tower Consult GmbH</p>
+    </div>
+  </div>
+
+  <div class="second-container scroll-trigger">
+    <h1>This is just a header!</h1>
+    <p>This is just a paragraph</p>
+  </div>
+
+  <div class="popup" id="signup-popup">
+    <div class="popup-content">
+      <h2>Sign Up</h2>
+      <input type="text" placeholder="Username" id="signup-username" required>
+      <input type="password" placeholder="Password" id="signup-password" required>
+      <button onclick="registerUser()">Register</button>
+    </div>
+  </div>
+
+  <script>
+    // Intersection Observer callback function
+    function handleIntersection(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }
+
+    // Create an Intersection Observer
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      rootMargin: '-200px', // Adjust the rootMargin as needed
+      threshold: 0.2, // Adjust the threshold as needed
+    });
+
+    // Get all elements with the 'scroll-trigger' class
+    const scrollTriggerElements = document.querySelectorAll('.scroll-trigger');
+
+    // Observe each scroll-trigger element
+    scrollTriggerElements.forEach((element) => {
+      observer.observe(element);
+    });
+
+    // Show the sign-up popup
+    function showPopup() {
+      document.getElementById('signup-popup').classList.add('show');
+    }
+
+    // Register user
+    function registerUser() {
+      const username = document.getElementById('signup-username').value;
+      const password = document.getElementById('signup-password').value;
+
+      // Check if username is already taken
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const existingUser = users.find(user => user.username === username);
+
+      if (existingUser) {
+        alert('Username is already taken. Please choose a different username.');
+      } else {
+        // Add the new user to the list
+        users.push({ username, password });
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Registration successful. You can now log in.');
+        document.getElementById('signup-popup').classList.remove('show');
+      }
+    }
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
+</body>
+
+</html>
+<!-- Finish sign up and log in buttons functionality -->
