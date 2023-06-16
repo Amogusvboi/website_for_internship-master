@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+
     /* Custom styles for the page */
     html,
     body {
@@ -218,18 +219,50 @@
       margin-bottom: 30px;
     }
   
+    .user-circle {
+      width: 35px;
+      height: 35px;
+      background-color: white;
+      border-radius: 50%;
+      border: 2px solid rgba(114, 164, 240, 0.712);
+    }
+
+    .user-username {
+      
+    }
+
+    #sidebar-user-account {
+      width: 250px;
+      height: 250px;
+      position: fixed;
+      top: 60px;
+      right: -250px; /* Initially off-screen */
+      background-color: #fff;
+      visibility: hidden; /* Initially hidden */
+      transition: visibility 0s ease-out 0.2s, right 0.2s ease-out; /* Transition properties */
+    }
+
+    #sidebar-user-account.open {
+      right: 17px;
+      border-radius: 10px;
+      visibility: visible;
+      transition-delay: 0s, 0s;
+      border: 2px solid rgba(114, 164, 240, 0.712);
+    }
+
   </style>
   
 </head>
 
 <body>
+
   <nav class="navbar navbar-expand-lg">
     <a class="navbar-brand" href="#">
       <img src="hamburger.png" alt="Logo">
     </a>
     <div class="ml-auto" id="navbarRight">
-      <button class="btn btn-outline-light mr-2 btn-signup" onclick="showPopup()">Sign Up</button>
-      <button class="btn btn-yellow" id="loginButton" onclick="showLoginPopup()">Log in</button>
+      <button class="btn btn-outline-light mr-2 btn-signup" onclick="showPopup('signupPopup')">Sign Up</button>
+      <button class="btn btn-yellow" id="loginButton" onclick="showPopup('loginPopup')">Log in</button>
     </div>
   </nav>
   
@@ -251,8 +284,7 @@
   <!-- Close button for the signup popup -->
   <div class="popup" id="signupPopup">
     <div class="popup-content">
-      <h2 class="signup-header">Sign Up</h2>
-      <!-- Add the close button with the cancel.png image -->
+      <h2 class="signup-header">Sign Up</h2>      
       <img src="cancel.png" alt="Close" class="close-button" onclick="closePopup('signupPopup')">
       <input type="text" placeholder="Username" id="signup-username" required>
       <input type="password" placeholder="Password" id="signup-password" required>
@@ -271,10 +303,13 @@
       <button class="btn btn-yellow" id="loginButton" onclick="loginUser()">Log in</button>
     </div>
   </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar-user-account" id="sidebar-user-account">
+    <!-- Sidebar content goes here -->
+  </div>
+
   
-
-
-
   <script>
     // Intersection Observer callback function
     function handleIntersection(entries, observer) {
@@ -302,8 +337,8 @@
     });
   
     // Show the login popup
-    function showPopup() {
-      document.getElementById('signupPopup').classList.add('show');
+    function showPopup(input_element) {
+      document.getElementById(input_element).classList.add('show');
     }
   
     // Register user
@@ -325,41 +360,87 @@
         document.getElementById('signupPopup').classList.remove('show');
       }
     }
-  
-    // Show the login popup
-    function showLoginPopup() {
-      document.getElementById('loginPopup').classList.add('show');
-    }
-  
+    
     // Log in user
     function loginUser() {
       const username = document.getElementById('login-username').value;
       const password = document.getElementById('login-password').value;
-  
+
       // Check if the user exists
       const users = JSON.parse(localStorage.getItem('users')) || [];
       const user = users.find(user => user.username === username && user.password === password);
-  
+
       if (user) {
         alert('Login successful. Welcome, ' + username + '!');
-        document.getElementById('navbarRight').innerHTML = '<span class="username-frame">' + username + '</span>';
-        document.getElementById('loginButton').style.display = 'none';
+
+        // Display a white circle with stroke
+        const navbarRight = document.getElementById('navbarRight');
+        navbarRight.innerHTML = '<div class="user-circle" onmouseover="openSidebar()" onmouseout="closeSidebar()"></div>';
+
+        // Close the login popup
         document.getElementById('loginPopup').classList.remove('show');
+
       } else {
         alert('Invalid username or password. Please try again.');
       }
     }
-  
-    // Close popup
-    function closePopup(popupId) {
-      document.getElementById(popupId).classList.remove('show');
+
+   // Open sidebar-user-account
+    function openSidebar() {
+      const sidebar = document.getElementById('sidebar-user-account');
+      sidebar.classList.add('open');
     }
-  
-    
+
+    // Open sidebar
+    function openSidebar() {
+      const sidebar = document.getElementById('sidebar-user-account');
+      sidebar.classList.add('open');
+    }
+
+    // Open sidebar
+    function openSidebar() {
+      const sidebar = document.getElementById('sidebar-user-account');
+      sidebar.classList.add('open');
+    }
+
+    // Close sidebar
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar-user-account');
+      const userCircle = document.querySelector('.user-circle');
+      setTimeout(function() {
+        if (!sidebar.matches(':hover') && !userCircle.matches(':hover')) {
+          sidebar.classList.remove('open');
+        }
+      }, 500); // Delay in milliseconds (0.5 seconds)
+    }
+
+    // Add event listener to user-circle for opening the sidebar
+    const userCircle = document.querySelector('.user-circle');
+    userCircle.addEventListener('mouseover', openSidebar);
+
+    // Add event listener to sidebar for keeping it open
+    const sidebar = document.getElementById('sidebar-user-account');
+    sidebar.addEventListener('mouseover', openSidebar);
+    sidebar.addEventListener('mouseout', closeSidebar);
+
+    // Add event listener to document for closing the sidebar
+    document.addEventListener('mouseout', function(event) {
+      if (!event.relatedTarget || (!event.relatedTarget.closest('#sidebar-user-account') && !event.relatedTarget.closest('.user-circle'))) {
+        closeSidebar();
+      }
+    });
+
+
+    // Close the popup
+    function closePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.classList.remove('show');
+    }
+
   </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
   
 </body>
 
 </html>
-<!-- Registration and login forms done -->
+<!--  -->
