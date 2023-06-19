@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Register Page</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .container h2 {
+      margin-bottom: 20px;
+      color: #333333;
+    }
+
+    .container input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      border: 1px solid #cccccc;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    .container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4caf50;
+      color: #ffffff;
+      border: none;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .container p.success {
+      color: #4caf50;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .container p.error {
+      color: #ff0000;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Register</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <input type="password" id="confirm-password" placeholder="Confirm Password">
+    <button onclick="register()">Register</button>
+    <p class="success" id="success-message"></p>
+    <p class="error" id="error-message"></p>
+  </div>
+
+  <script>
+    function register() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const successMessage = document.getElementById('success-message');
+      const errorMessage = document.getElementById('error-message');
+
+      // Validate password match
+      if (password !== confirmPassword) {
+        // Clear success message
+        successMessage.textContent = '';
+
+        // Display error message for password mismatch
+        errorMessage.textContent = 'Password and Confirm Password do not match.';
+      } else {
+        // Clear error message
+        errorMessage.textContent = '';
+
+        // Save user credentials locally
+        const user = { username, password };
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Check if username is already taken
+        const existingUser = users.find((user) => user.username === username);
+        if (existingUser) {
+          // Display error message for username already taken
+          errorMessage.textContent = 'Username is already taken. Please choose a different username.';
+        } else {
+          // Add the new user to the list
+          users.push(user);
+          localStorage.setItem('users', JSON.stringify(users));
+
+          // Clear input fields
+          document.getElementById('username').value = '';
+          document.getElementById('password').value = '';
+          document.getElementById('confirm-password').value = '';
+
+          // Display success message
+          successMessage.textContent = 'Registration successful. You can now login.';
+        }
+      }
+    }
+  </script>
+</body>
+</html>

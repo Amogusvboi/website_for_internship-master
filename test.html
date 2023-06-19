@@ -53,17 +53,35 @@
       overflow: hidden;
     }
   
-    .second-container {
-      background-color: white;
+    .second-container.visible {
+      background-color: rgb(41, 41, 41);
       height: calc(100% - 25px);
-      border: 2px solid black;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      border: 2px solid black;      
+      display: grid; /* Use grid layout */
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr; 
+      grid-gap: 10px; /* Add gap between grid items */
+      justify-items: center; /* Center items horizontally within each grid cell */
+      align-items: center; /* Center items vertically within each grid cell */
     }
-  
+
+    .second-container > div {
+      flex-basis: calc(33.33% - 20px);      
+      background-color: transparent;
+      height: 200px;
+      box-sizing: border-box;
+      border: 2px white; /* Add white border to each division */
+    }
+    .second-container.visible h1,h2,h3,h4,h5,h6 {
+      color: white;
+      text-align: center;
+    }
+
+    .second-container.visible > div {
+      border-right: 1px solid grey;
+      border-left: 1px solid grey;
+    }
+
     .btn-signup::before {
       content: '';
       position: absolute;
@@ -91,11 +109,11 @@
   
     /* Custom styles for the container */
     .custom-container {
-      display: flex;
+      display: flex;      
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: calc(100% - 25px); /* Update the height for the first container */
+      height: calc(100% - 58px); /* Update the height for the first container */
       padding: 20px;
     }
   
@@ -118,10 +136,6 @@
       font-size: 30px;
       color: grey;
       font-family: "Candara", sans-serif;
-    }
-  
-    .second-container p {
-      margin-top: -25px; /* Adjust the margin value as needed */
     }
   
     .scroll-trigger {
@@ -151,6 +165,10 @@
       visibility: hidden;
       opacity: 0;
       transition: visibility 0s linear 0.25s, opacity 0.25s;
+    }
+
+    .popup h1,h2,h3,h4,h5,h6 {
+      color: black;
     }
   
     .popup.show {
@@ -261,8 +279,8 @@
       <img src="hamburger.png" alt="Logo">
     </a>
     <div class="ml-auto" id="navbarRight">
-      <button class="btn btn-outline-light mr-2 btn-signup" onclick="showPopup('signupPopup')">Sign Up</button>
-      <button class="btn btn-yellow" id="loginButton" onclick="showPopup('loginPopup')">Log in</button>
+      <button class="btn btn-outline-light mr-2 btn-signup" onclick="redirectToRegister()">Sign Up</button>
+      <button class="btn btn-yellow" id="loginButton" onclick="redirectToLogin()">Log in</button>
     </div>
   </nav>
   
@@ -273,34 +291,15 @@
     </div>
   </div>
   
-  <div class="second-container scroll-trigger">
-    <h1>This is just a header!</h1>
-    <br>
-    <br>
-    <br>
-    <p>This is just a paragraph</p>
-  </div>
-  
-  <!-- Close button for the signup popup -->
-  <div class="popup" id="signupPopup">
-    <div class="popup-content">
-      <h2 class="signup-header">Sign Up</h2>      
-      <img src="cancel.png" alt="Close" class="close-button" onclick="closePopup('signupPopup')">
-      <input type="text" placeholder="Username" id="signup-username" required>
-      <input type="password" placeholder="Password" id="signup-password" required>
-      <button onclick="registerUser()">Register</button>
+  <div class="second-container visible">
+    <div>
+      <h1>Port scanner</h1>
     </div>
-  </div>
-  
-  <!-- Close button for the login popup -->
-  <div class="popup" id="loginPopup">
-    <div class="popup-content">
-      <h2 class="login-header">Log in</h2>
-      <!-- Add the close button with the cancel.png image -->
-      <img src="cancel.png" alt="Close" class="close-button" onclick="closePopup('loginPopup')">
-      <input type="text" placeholder="Username" id="login-username" required>
-      <input type="password" placeholder="Password" id="login-password" required>
-      <button class="btn btn-yellow" id="loginButton" onclick="loginUser()">Log in</button>
+    <div>
+      <h1>Password cracker</h1>
+    </div>
+    <div>
+      <h1>Hash decoder</h1>
     </div>
   </div>
 
@@ -336,73 +335,21 @@
       observer.observe(element);
     });
   
-    // Show the login popup
-    function showPopup(input_element) {
-      document.getElementById(input_element).classList.add('show');
+    function redirectToRegister() {
+      window.location.href = "register.html";
     }
   
-    // Register user
-    function registerUser() {
-      const username = document.getElementById('signup-username').value;
-      const password = document.getElementById('signup-password').value;
+    // Function to redirect to the login page
+    function redirectToLogin() {
+      window.location.href = "login.html";
+    }
   
-      // Check if username is already taken
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const existingUser = users.find(user => user.username === username);
-  
-      if (existingUser) {
-        alert('Username is already taken. Please choose a different username.');
-      } else {
-        // Add the new user to the list
-        users.push({ username, password });
-        localStorage.setItem('users', JSON.stringify(users));
-        alert('Registration successful. You can now log in.');
-        document.getElementById('signupPopup').classList.remove('show');
-      }
-    }
-    
-    // Log in user
-    function loginUser() {
-      const username = document.getElementById('login-username').value;
-      const password = document.getElementById('login-password').value;
-
-      // Check if the user exists
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const user = users.find(user => user.username === username && user.password === password);
-
-      if (user) {
-        alert('Login successful. Welcome, ' + username + '!');
-
-        // Display a white circle with stroke
-        const navbarRight = document.getElementById('navbarRight');
-        navbarRight.innerHTML = '<div class="user-circle" onmouseover="openSidebar()" onmouseout="closeSidebar()"></div>';
-
-        // Close the login popup
-        document.getElementById('loginPopup').classList.remove('show');
-
-      } else {
-        alert('Invalid username or password. Please try again.');
-      }
-    }
-
-   // Open sidebar-user-account
-    function openSidebar() {
-      const sidebar = document.getElementById('sidebar-user-account');
-      sidebar.classList.add('open');
-    }
-
     // Open sidebar
     function openSidebar() {
       const sidebar = document.getElementById('sidebar-user-account');
       sidebar.classList.add('open');
     }
-
-    // Open sidebar
-    function openSidebar() {
-      const sidebar = document.getElementById('sidebar-user-account');
-      sidebar.classList.add('open');
-    }
-
+  
     // Close sidebar
     function closeSidebar() {
       const sidebar = document.getElementById('sidebar-user-account');
@@ -413,30 +360,78 @@
         }
       }, 500); // Delay in milliseconds (0.5 seconds)
     }
-
+  
     // Add event listener to user-circle for opening the sidebar
     const userCircle = document.querySelector('.user-circle');
     userCircle.addEventListener('mouseover', openSidebar);
-
+  
     // Add event listener to sidebar for keeping it open
     const sidebar = document.getElementById('sidebar-user-account');
     sidebar.addEventListener('mouseover', openSidebar);
     sidebar.addEventListener('mouseout', closeSidebar);
-
+  
     // Add event listener to document for closing the sidebar
     document.addEventListener('mouseout', function(event) {
       if (!event.relatedTarget || (!event.relatedTarget.closest('#sidebar-user-account') && !event.relatedTarget.closest('.user-circle'))) {
         closeSidebar();
       }
     });
-
-
+  
     // Close the popup
     function closePopup(popupId) {
       const popup = document.getElementById(popupId);
       popup.classList.remove('show');
     }
-
+  
+    // Function to handle successful login
+    function handleSuccessfulLogin(username) {
+      // Disable register and login buttons
+      const registerButton = document.querySelector('.btn-signup');
+      const loginButton = document.getElementById('loginButton');
+      registerButton.disabled = true;
+      loginButton.disabled = true;
+  
+      // Update greeting message
+      const greetingMessage = document.createElement('span');
+      greetingMessage.textContent = 'Hello, ' + username;
+      greetingMessage.classList.add('user-username');
+      const navbarRight = document.getElementById('navbarRight');
+      navbarRight.insertBefore(greetingMessage, navbarRight.firstChild);
+  
+      // Create logout button
+      const logoutButton = document.createElement('button');
+      logoutButton.textContent = 'Logout';
+      logoutButton.classList.add('btn', 'btn-danger', 'ml-2');
+      logoutButton.addEventListener('click', handleLogout);
+      navbarRight.appendChild(logoutButton);
+    }
+  
+    // Function to handle logout
+    function handleLogout() {
+      // Enable register and login buttons
+      const registerButton = document.querySelector('.btn-signup');
+      const loginButton = document.getElementById('loginButton');
+      registerButton.disabled = false;
+      loginButton.disabled = false;
+  
+      // Remove greeting message and logout button
+      const greetingMessage = document.querySelector('.user-username');
+      const logoutButton = document.querySelector('.btn-danger');
+      greetingMessage.remove();
+      logoutButton.remove();
+    }
+  
+    // Check if the user is logged in and update the page accordingly
+    function checkLoggedIn() {
+      const loggedInUser = sessionStorage.getItem('loggedInUser');
+  
+      if (loggedInUser) {
+        handleSuccessfulLogin(loggedInUser);
+      }
+    }
+  
+    // Call the checkLoggedIn function on page load
+    checkLoggedIn();
   </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
   

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .container h2 {
+      margin-bottom: 20px;
+      color: #333333;
+    }
+
+    .container input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      border: 1px solid #cccccc;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    .container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4caf50;
+      color: #ffffff;
+      border: none;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .container p.error {
+      color: #ff0000;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p class="error" id="error-message"></p>
+  </div>
+
+  <script>
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('error-message');
+
+      // Check if the credentials are valid
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(user => user.username === username && user.password === password);
+
+      if (user) {
+        // Login successful
+        errorMessage.textContent = '';
+        alert('Login successful. Welcome, ' + username + '!');
+        // Redirect to the dashboard or another page
+        window.location.href = 'test.html';
+      } else {
+        // Login failed
+        errorMessage.textContent = 'Invalid username or password. Please try again.';
+      }
+    }
+  </script>
+</body>
+</html>
