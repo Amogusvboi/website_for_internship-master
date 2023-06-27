@@ -310,6 +310,7 @@
 
   
   <script>
+
     // Intersection Observer callback function
     function handleIntersection(entries, observer) {
       entries.forEach((entry) => {
@@ -390,14 +391,13 @@
       const loginButton = document.getElementById('loginButton');
       registerButton.disabled = true;
       loginButton.disabled = true;
-  
-      // Update greeting message
-      const greetingMessage = document.createElement('span');
-      greetingMessage.textContent = 'Hello, ' + username;
-      greetingMessage.classList.add('user-username');
+
+      // Create user circle
+      const userCircle = document.createElement('div');
+      userCircle.classList.add('user-circle');
       const navbarRight = document.getElementById('navbarRight');
-      navbarRight.insertBefore(greetingMessage, navbarRight.firstChild);
-  
+      navbarRight.insertBefore(userCircle, navbarRight.firstChild);
+
       // Create logout button
       const logoutButton = document.createElement('button');
       logoutButton.textContent = 'Logout';
@@ -405,7 +405,7 @@
       logoutButton.addEventListener('click', handleLogout);
       navbarRight.appendChild(logoutButton);
     }
-  
+
     // Function to handle logout
     function handleLogout() {
       // Enable register and login buttons
@@ -413,14 +413,14 @@
       const loginButton = document.getElementById('loginButton');
       registerButton.disabled = false;
       loginButton.disabled = false;
-  
-      // Remove greeting message and logout button
-      const greetingMessage = document.querySelector('.user-username');
+
+      // Remove user circle and logout button
+      const userCircle = document.querySelector('.user-circle');
       const logoutButton = document.querySelector('.btn-danger');
-      greetingMessage.remove();
+      userCircle.remove();
       logoutButton.remove();
     }
-  
+    
     // Check if the user is logged in and update the page accordingly
     function checkLoggedIn() {
       const loggedInUser = sessionStorage.getItem('loggedInUser');

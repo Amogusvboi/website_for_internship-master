@@ -7,18 +7,18 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     /* Custom styles for the page */
-    html, body {
+    html,
+    body {
       height: 100%;
       margin: 0;
       padding: 0;
     }
 
     body {
-      background-image: url('background-tower.png');
+      background-image: url('./background-tower.jpg');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
-      /* color: white; */
     }
 
     /* Custom styles for the navigation bar */
@@ -161,6 +161,19 @@
       max-width: 400px;
       text-align: center;
     }
+    
+    .cancel-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .popup-content {
+      position: relative; /* Add this to make the cancel button relative to the popup content */
+    }
 
     .popup-content input {
       margin-bottom: 10px;
@@ -179,6 +192,17 @@
       color: white;
       cursor: pointer;
     }
+
+    .username-frame {
+      display: inline-block;
+      padding: 5px 10px;
+      border: 2px solid blue;
+      border-radius: 5px;
+      color: blue;
+      background-color: lightblue;
+      font-weight: bold;
+    }
+
   </style>
 </head>
 
@@ -187,9 +211,9 @@
     <a class="navbar-brand" href="#">
       <img src="hamburger.png" alt="Logo">
     </a>
-    <div class="ml-auto">
+    <div class="ml-auto" id="navbarRight">
       <button class="btn btn-outline-light mr-2 btn-signup" onclick="showPopup()">Sign Up</button>
-      <button class="btn btn-yellow">Log in</button>
+      <button class="btn btn-yellow" id="loginButton" onclick="showLoginPopup()">Log in</button>
     </div>
   </nav>
 
@@ -202,17 +226,28 @@
 
   <div class="second-container scroll-trigger">
     <h1>This is just a header!</h1>
-    <p>This is just a paragraph</p>
   </div>
 
-  <div class="popup" id="signup-popup">
+  <div class="popup" id="loginPopup">
     <div class="popup-content">
+      <img src="cancel.png" alt="Cancel" class="cancel-button" onclick="closePopup('loginPopup')">
+      <h2>Log in</h2>
+      <input type="text" placeholder="Username" id="login-username" required>
+      <input type="password" placeholder="Password" id="login-password" required>
+      <button class="btn btn-yellow" id="loginButton" onclick="loginUser()">Log in</button>
+    </div>
+  </div>
+
+  <div class="popup" id="signupPopup">
+    <div class="popup-content">
+      <img src="cancel.png" alt="Cancel" class="cancel-button" onclick="closePopup('signupPopup')">
       <h2>Sign Up</h2>
       <input type="text" placeholder="Username" id="signup-username" required>
       <input type="password" placeholder="Password" id="signup-password" required>
       <button onclick="registerUser()">Register</button>
     </div>
   </div>
+  
 
   <script>
     // Intersection Observer callback function
@@ -240,9 +275,15 @@
       observer.observe(element);
     });
 
-    // Show the sign-up popup
+    // Show the login popup
     function showPopup() {
-      document.getElementById('signup-popup').classList.add('show');
+      document.getElementById('signupPopup').classList.add('show');
+    }
+
+    // Close the popup
+    function closePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.classList.remove('show');
     }
 
     // Register user
@@ -261,12 +302,75 @@
         users.push({ username, password });
         localStorage.setItem('users', JSON.stringify(users));
         alert('Registration successful. You can now log in.');
-        document.getElementById('signup-popup').classList.remove('show');
+        document.getElementById('signupPopup').classList.remove('show');
       }
     }
+
+    // Show the login popup
+    function showLoginPopup() {
+      document.getElementById('loginPopup').classList.add('show');
+    }
+
+    // Login user
+    function loginUser() {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      // Get the list of registered users from local storage
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+
+      // Find the user with the matching username and password
+      const loggedInUser = users.find(user => user.username === username && user.password === password);
+
+      if (loggedInUser) {
+        alert('Login successful.');
+        handleSuccessfulLogin(username); // Call the function to handle successful login
+        document.getElementById('loginPopup').classList.remove('show');
+      } else {
+        alert('Invalid username or password. Please try again.');
+      }
+    }
+
+    // Function to handle successful login
+    function handleSuccessfulLogin(username) {
+      // Disable register and login buttons
+      const registerButton = document.querySelector('.btn-signup');
+      const loginButton = document.getElementById('loginButton');
+      registerButton.disabled = true;
+      loginButton.disabled = true;
+
+      // Create user circle
+      const userCircle = document.createElement('div');
+      userCircle.classList.add('user-circle');
+      const navbarRight = document.getElementById('navbarRight');
+      navbarRight.insertBefore(userCircle, navbarRight.firstChild);
+
+      // Create logout button
+      const logoutButton = document.createElement('button');
+      logoutButton.textContent = 'Logout';
+      logoutButton.classList.add('btn', 'btn-danger', 'ml-2');
+      logoutButton.addEventListener('click', handleLogout);
+      navbarRight.appendChild(logoutButton);
+    }
+
+    // Function to handle logout
+    function handleLogout() {
+      // Enable register and login buttons
+      const registerButton = document.querySelector('.btn-signup');
+      const loginButton = document.getElementById('loginButton');
+      registerButton.disabled = false;
+      loginButton.disabled = false;
+
+      // Remove user circle and logout button
+      const userCircle = document.querySelector('.user-circle');
+      const logoutButton = document.querySelector('.btn-danger');
+      userCircle.remove();
+      logoutButton.remove();
+    }
+    
   </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
 </body>
 
 </html>
-<!-- Finish sign up and log in buttons functionality -->
+<!-- Registration and login forms done -->

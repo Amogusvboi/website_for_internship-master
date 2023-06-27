@@ -77,9 +77,12 @@
       if (user) {
         // Login successful
         errorMessage.textContent = '';
-        alert('Login successful. Welcome, ' + username + '!');
-        // Redirect to the dashboard or another page
-        window.location.href = 'test.html';
+        alert('Login successful. Welcome, ' + username + '!');        
+        localStorage.setItem("loggedIn", "true");
+
+        // Redirect the user back to test.html
+        window.location.href = "test.html";
+
       } else {
         // Login failed
         errorMessage.textContent = 'Invalid username or password. Please try again.';
